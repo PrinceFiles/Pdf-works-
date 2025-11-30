@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF to JPG Converter Online Free | QuickPDF Tools</title>
+
+  <meta name="description" content="Convert PDF to JPG images online for free. Fast, secure and mobile-friendly PDF to image converter for students and professionals.">
+  <meta name="keywords" content="pdf to jpg, pdf to image, convert pdf to jpg, pdf tools, online pdf converter">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://princefiles.github.io/Pdf-works-/pdf-to-jpg.html">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #020617);
+      color: #fff;
+    }
+
+    header {
+      background: #020617;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 2px solid #2563eb;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #93c5fd;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: rgba(10, 15, 40, 0.85);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 16px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    input[type=file] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+      background: #0f172a;
+      color: #fff;
+    }
+
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    h2 {
+      color: #93c5fd;
+      margin-top: 0;
+    }
+
+    ul {
+      padding-left: 18px;
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #9fb7ff;
+      padding: 16px;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+      background: #000;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>QuickPDF Tools — PDF to JPG</h1>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Convert PDF to JPG Online</h2>
+    <p>Easily convert your PDF pages into high-quality JPG images for free.</p>
+
+    <input type="file" id="pdfInput" accept="application/pdf">
+    <button onclick="convertPDF()">Convert Now</button>
+
+    <div class="status" id="status">Select a PDF file.</div>
+    <div id="output"></div>
+  </div>
+
+  <div class="card">
+    <h2>📌 How to Use</h2>
+    <ul>
+      <li>Select a PDF file from your device.</li>
+      <li>Click on Convert Now.</li>
+      <li>Each page will be downloaded as a JPG image.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✅ Why Use This Tool</h2>
+    <ul>
+      <li>100% Free PDF to Image Converter</li>
+      <li>Works on Mobile</li>
+      <li>No Signup Required</li>
+      <li>Secure & Fast</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>© 2025 QuickPDF Tools</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+  async function convertPDF() {
+    const input = document.getElementById("pdfInput");
+    const status = document.getElementById("status");
+    const output = document.getElementById("output");
+
+    if (!input.files || !input.files[0]) {
+      status.textContent = "❌ Please select a PDF file.";
+      return;
+    }
+
+    status.textContent = "⏳ Converting PDF to JPG...";
+    output.innerHTML = "";
+
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async function() {
+      const typedarray = new Uint8Array(this.result);
+      const pdf = await pdfjsLib.getDocument(typedarray).promise;
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        canvas.toBlob(function(blob) {
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "page-" + i + ".jpg";
+          link.click();
+        }, "image/jpeg");
+      }
+
+      status.textContent = "✅ Conversion complete. Images downloaded.";
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
+</script>
+
+</body>
+</html>
