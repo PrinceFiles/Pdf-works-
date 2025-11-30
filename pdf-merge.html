@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Merge PDF Online Free | QuickPDF Tools</title>
+  <meta name="description" content="Merge multiple PDF files into one online for free. Fast, secure and mobile friendly PDF merger tool for students and professionals.">
+  <meta name="keywords" content="merge pdf, combine pdf, pdf joiner, pdf merger online, pdf tools">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://princefiles.github.io/Pdf-works-/pdf-merge.html">
+  <style>
+    body {margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#020617);color:#fff}
+    header {background:#020617;padding:15px;text-align:center;border-bottom:2px solid #2563eb}
+    header h1 {margin:0;font-size:18px;color:#93c5fd}
+    .container {max-width:800px;margin:auto;padding:15px}
+    .card {background:rgba(10,15,40,0.85);border-radius:12px;padding:18px;margin-top:16px;border:1px solid #1e293b;box-shadow:0 8px 20px rgba(0,0,0,0.5)}
+    input[type=file] {width:100%;padding:12px;border-radius:10px;border:1px solid #1e293b;background:#0f172a;color:#fff}
+    button {margin-top:12px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:bold;cursor:pointer}
+    .status {margin-top:10px;font-size:14px;color:#cbd5e1}
+    h2 {color:#93c5fd;margin-top:0}
+    ul {padding-left:18px}
+    footer {margin-top:20px;text-align:center;font-size:13px;color:#9fb7ff;padding:16px}
+  </style>
+</head>
+<body>
+<header><h1>QuickPDF Tools — Merge PDF</h1></header>
+<div class="container">
+  <div class="card">
+    <h2>Merge PDF Online</h2>
+    <p>Combine multiple PDF files into one easily. Perfect for assignments, documents, and sharing.</p>
+    <input type="file" id="pdfFiles" multiple accept="application/pdf">
+    <button onclick="mergePDFs()">Merge PDFs</button>
+    <div class="status" id="status">Select at least 2 PDF files.</div>
+  </div>
+  <div class="card">
+    <h2>📌 How to Use</h2>
+    <ul>
+      <li>Select multiple PDF files.</li>
+      <li>Click on Merge PDFs.</li>
+      <li>Your merged PDF will download automatically.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>✅ Why Use This Tool</h2>
+    <ul>
+      <li>100% Free PDF Merger</li>
+      <li>Works on Mobile</li>
+      <li>No Signup Required</li>
+      <li>Fast and Secure</li>
+    </ul>
+  </div>
+</div>
+<footer>© 2025 QuickPDF Tools</footer>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script>
+  async function mergePDFs() {
+    const input = document.getElementById("pdfFiles");
+    const status = document.getElementById("status");
+    if (input.files.length < 2) {
+      status.textContent = "❌ Select at least 2 PDF files.";
+      return;
+    }
+    status.textContent = "⏳ Merging PDFs...";
+    try {
+      const mergedPdf = await PDFLib.PDFDocument.create();
+      for (let file of input.files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+      }
+      const mergedBytes = await mergedPdf.save();
+      const blob = new Blob([mergedBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "merged.pdf";
+      link.click();
+      status.textContent = "✅ PDFs merged successfully!";
+    } catch {
+      status.textContent = "❌ Error merging files.";
+    }
+  }
+</script>
+</body>
+</html>
