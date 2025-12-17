@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Edit PDF Online – Free & Simple</title>
+<meta name="description" content="Edit PDF online for free. Add text, move elements, no login, no watermark. Simple PDF editor for students.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+  margin:0;
+}
+header{
+  background:#e63946;
+  color:#fff;
+  padding:15px;
+  text-align:center;
+}
+.container{
+  padding:15px;
+}
+button{
+  background:#e63946;
+  color:#fff;
+  border:none;
+  padding:10px 14px;
+  margin:5px 3px;
+  border-radius:6px;
+  cursor:pointer;
+}
+button.secondary{
+  background:#457b9d;
+}
+input[type="file"]{
+  margin:10px 0;
+}
+#editor{
+  position:relative;
+  margin-top:15px;
+  background:#ddd;
+  overflow:hidden;
+}
+#pdfCanvas{
+  width:100%;
+}
+.text-box{
+  position:absolute;
+  background:rgba(255,255,255,0.8);
+  border:1px dashed #333;
+  padding:4px;
+  cursor:move;
+}
+.tools{
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>Edit PDF – Simple & Free</h2>
+<p>No login • No watermark • Student friendly</p>
+</header>
+
+<div class="container">
+
+<input type="file" accept="application/pdf" onchange="loadPDF(this)">
+<p id="fileName"></p>
+
+<div class="tools">
+<button onclick="addText()">Add Text</button>
+<button class="secondary" onclick="clearEditor()">Clear</button>
+</div>
+
+<div id="editor">
+<canvas id="pdfCanvas"></canvas>
+</div>
+
+<h3>How to use</h3>
+<ol>
+<li>Select your PDF</li>
+<li>Add text & drag it</li>
+<li>Preview changes</li>
+<li>Download coming soon</li>
+</ol>
+
+</div>
+
+<script>
+let pdfDoc = null;
+let canvas = document.getElementById("pdfCanvas");
+let ctx = canvas.getContext("2d");
+
+function loadPDF(input){
+  let file = input.files[0];
+  if(!file) return;
+
+  document.getElementById("fileName").innerText =
+    "Selected: " + file.name + " (page 1 preview)";
+
+  let reader = new FileReader();
+  reader.onload = function(){
+    let typedarray = new Uint8Array(this.result);
+    pdfjsLib.getDocument(typedarray).promise.then(pdf=>{
+      pdfDoc = pdf;
+      renderPage(1);
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderPage(num){
+  pdfDoc.getPage(num).then(page=>{
+    let viewport = page.getViewport({scale:1.5});
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    });
+  });
+}
+
+function addText(){
+  let div = document.createElement("div");
+  div.className = "text-box";
+  div.contentEditable = true;
+  div.innerText = "Edit text";
+  div.style.left = "20px";
+  div.style.top = "20px";
+  drag(div);
+  document.getElementById("editor").appendChild(div);
+}
+
+function drag(el){
+  el.onmousedown = function(e){
+    let x = e.clientX - el.offsetLeft;
+    let y = e.clientY - el.offsetTop;
+    document.onmousemove = function(e){
+      el.style.left = e.clientX - x + "px";
+      el.style.top = e.clientY - y + "px";
+    }
+    document.onmouseup = ()=>document.onmousemove=null;
+  }
+}
+
+function clearEditor(){
+  document.getElementById("editor").innerHTML =
+    '<canvas id="pdfCanvas"></canvas>';
+  canvas = document.getElementById("pdfCanvas");
+  ctx = canvas.getContext("2d");
+}
+</script>
+
+</body>
+</html>
